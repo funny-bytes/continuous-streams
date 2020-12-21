@@ -9,8 +9,8 @@ Stream classes with specific behaviour:
 * timeouts
 * graceful shutdown after `SIGTERM` or `SIGINT`
 
-[![Build Status](https://travis-ci.org/frankthelen/continuous-streams.svg?branch=master)](https://travis-ci.org/frankthelen/continuous-streams)
-[![Coverage Status](https://coveralls.io/repos/github/frankthelen/continuous-streams/badge.svg?branch=master)](https://coveralls.io/github/frankthelen/continuous-streams?branch=master)
+[![Build Status](https://travis-ci.org/frankthelen/continuous-streams.svg?branch=main)](https://travis-ci.org/frankthelen/continuous-streams)
+[![Coverage Status](https://coveralls.io/repos/github/frankthelen/continuous-streams/badge.svg?branch=main)](https://coveralls.io/github/frankthelen/continuous-streams?branch=main)
 [![node](https://img.shields.io/node/v/continuous-streams.svg)](https://nodejs.org)
 [![code style](https://img.shields.io/badge/code_style-airbnb-brightgreen.svg)](https://github.com/airbnb/javascript)
 [![License Status](http://img.shields.io/npm/l/continuous-streams.svg)]()
