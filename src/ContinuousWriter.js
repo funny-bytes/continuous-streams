@@ -49,7 +49,7 @@ class ContinuousWriter extends Writable {
   }
 
   // eslint-disable-next-line no-underscore-dangle, consistent-return
-  async _final(callback) {
+  _final(callback) {
     // Called before the stream closes, delaying the 'finish' event.
     // The Writables's write buffer is already drained at this point.
     // Ensure async operations still in-flight are finishing...

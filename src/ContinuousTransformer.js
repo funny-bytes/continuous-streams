@@ -54,7 +54,7 @@ class ContinuousTransformer extends Transform {
   }
 
   // eslint-disable-next-line no-underscore-dangle, consistent-return
-  async _flush(callback) {
+  _flush(callback) {
     // Called when there is no more written data to be consumed,
     // but before the 'end' event is emitted signaling the end of the Readable stream.
     // The Transform's write buffer is already drained at this point.
