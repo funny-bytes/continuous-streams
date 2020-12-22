@@ -2,7 +2,7 @@
 
 Stream classes with specific behaviour:
 
-* continuous reading, i.e., don't stop if there is temporarily no data available
+* continuous reading, i.e., it doesn't stop if there is temporarily no data available
 * configurable chunk size to read
 * specific error handling (error vs. skip/retry)
 * configurable parallel processing
@@ -11,6 +11,7 @@ Stream classes with specific behaviour:
 
 [![Build Status](https://travis-ci.org/frankthelen/continuous-streams.svg?branch=main)](https://travis-ci.org/frankthelen/continuous-streams)
 [![Coverage Status](https://coveralls.io/repos/github/frankthelen/continuous-streams/badge.svg?branch=main)](https://coveralls.io/github/frankthelen/continuous-streams?branch=main)
+[![Maintainability](https://api.codeclimate.com/v1/badges/d0f823493c0977615c21/maintainability)](https://codeclimate.com/github/frankthelen/continuous-streams/maintainability)
 [![node](https://img.shields.io/node/v/continuous-streams.svg)](https://nodejs.org)
 [![code style](https://img.shields.io/badge/code_style-airbnb-brightgreen.svg)](https://github.com/airbnb/javascript)
 [![License Status](http://img.shields.io/npm/l/continuous-streams.svg)]()
@@ -33,8 +34,8 @@ const reader = new ContinuousReader({
   chunkSize: 100, // default `50`
 });
 reader.readData = async (count) => {
-  // read `count` items from resource (result can be empty [])
-  // if rejects, a `skip` event will be emitted
+  // read `count` items from resource (can be empty [])
+  // if rejects, a `skip` event is emitted (unless `skipOnError` is `false`)
   return items; // array of data items
 };
 
@@ -43,7 +44,7 @@ const writer = new ContinuousWriter({
 });
 writer.writeData = async (item) => {
   // process a single data item
-  // if rejects, a `skip` event will be emitted
+  // if rejects, a `skip` event is emitted (unless `skipOnError` is `false`)
 };
 
 pipeline( // go!
@@ -82,11 +83,11 @@ It supports gracefully shutting down the pipeline.
 
 **Events**
 
-* `skip` - When reading from the underlying resource failed (if `skipOnError` is `true`). The stream continues to read after a delay of `waitAfterError`. Example: `reader.on('skip', ({ error }) => { ... })`.
-* `error` - When reading from the underlying resource failed (if `skipOnError` is `false`). If the pipeline was started with `pipeline()`, the pipeline will stop. If the pipeline was started with `pipe()`, it will continue processing -- an error handler must be provided though. Example: `reader.on('error', (error) => { ... })`.
+* `skip` - When reading from the underlying resource failed (if `skipOnError` is `true`). The stream continues to read after a delay of `waitAfterError`. Example handler: `reader.on('skip', ({ error }) => { ... })`.
+* `error` - When reading from the underlying resource failed (if `skipOnError` is `false`). If the pipeline was started with `pipeline()`, the pipeline will stop. If the pipeline was started with `pipe()`, it will continue processing -- an error handler must be provided though. Example handler: `reader.on('error', (error) => { ... })`.
 * `end` - When `stop()` was called for gracefully shutting down the pipeline.
 * `close` - When the stream is closed (as usual).
-* `debug` - After each successful reading attempt providing some debug information. Example: `reader.on('debug', ({ items, requested, total }) => { ... })`.
+* `debug` - After each successful reading attempt providing some debug information. Example handler: `reader.on('debug', ({ items, requested, total, elapsed }) => { ... })`.
 
 ### `ContinuousWriter`
 
@@ -109,11 +110,11 @@ Supports gracefully shutting down the entire pipeline, i.e., it waits until all 
 
 **Events**
 
-* `skip` - If `skipOnError` is `true` (default). Example: `writer.on('skip', ({ data, error }) => { ... })`.
+* `skip` - If `skipOnError` is `true` (default). Example handler: `writer.on('skip', ({ data, error }) => { ... })`.
 * `error` - If `skipOnError` is `false`. The pipeline will stop.
 * `finish` - After graceful shutdown and all asynchronous write operations are returned.
 * `close` - After `error` or `finish` (as usual).
-* `debug` - After each successful write operation providing some debug information. Example: `writer.on('debug', ({ inflight, total }) => { ... })`.
+* `debug` - After each successful write operation providing some debug information. Example handler: `writer.on('debug', ({ inflight, total, elapsed }) => { ... })`.
 
 ### `ContinuousTransformer`
 
@@ -135,7 +136,7 @@ If `skipOnError` is `false`, an error during a transform operation emits an `err
 
 **Events**
 
-* `skip` - If `skipOnError` is `true` (default). Example: `transformer.on('skip', ({ data, error }) => { ... })`.
+* `skip` - If `skipOnError` is `true` (default). Example handler: `transformer.on('skip', ({ data, error }) => { ... })`.
 * `error` - If `skipOnError` is `false`. The pipeline will stop.
 * `close` - When the stream is closed (as usual).
-* `debug` - After each successful transform operation providing some debug information. Example: `transformer.on('debug', ({ inflight, total }) => { ... })`.
+* `debug` - After each successful transform operation providing some debug information. Example handler: `transformer.on('debug', ({ inflight, total, elapsed }) => { ... })`.

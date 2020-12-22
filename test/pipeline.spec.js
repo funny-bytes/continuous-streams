@@ -1,11 +1,9 @@
 /* eslint-disable arrow-body-style */
 require('./setup');
 const delay = require('delay');
-const ContinuousReader = require('../src/ContinuousReader');
-const ContinuousWriter = require('../src/ContinuousWriter');
-const ContinuousTransformer = require('../src/ContinuousTransformer');
+const { ContinuousReader, ContinuousWriter, ContinuousTransformer } = require('..');
 
-describe('Continuous Streaming Pipeline', () => {
+describe('Continuous pipeline', () => {
   const createDataArray = async (count) => {
     const chunk = `${Date.now()}`;
     const result = Array

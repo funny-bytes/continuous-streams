@@ -1,7 +1,13 @@
 require('./setup');
+const { expect } = require('chai');
 const FlightController = require('../src/FlightController');
 
-describe('services/streams/FlightController', () => {
+describe('FlightController', () => {
+  it('should set default values', () => {
+    const fc = new FlightController();
+    expect(fc.limit).to.be.equals(10);
+  });
+
   it('should not call callback if limit is reached', () => {
     const fc = new FlightController({ limit: 2 });
     const cb1 = sinon.spy();
