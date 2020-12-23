@@ -1,7 +1,9 @@
 /* eslint-disable arrow-body-style */
 require('./setup');
+const { expect } = require('chai');
 const delay = require('delay');
 const { ContinuousReader, ContinuousWriter, ContinuousTransformer } = require('..');
+const { pipeline } = require('../src/ContinuousReader');
 
 describe('Continuous pipeline', () => {
   const createDataArray = async (count) => {
@@ -14,64 +16,104 @@ describe('Continuous pipeline', () => {
 
   it('should stream continuously reader->writer', async () => {
     return new Promise((resolve) => {
-      const written = [];
+      const end = sinon.spy();
+      const finish = sinon.spy();
       let counter = 0;
       const reader = new ContinuousReader();
-      reader.readData = async (count) => {
-        return createDataArray(count);
-      };
+      reader.readData = async (count) => createDataArray(count);
+      reader.on('end', end);
       const writer = new ContinuousWriter();
-      writer.writeData = async (data) => {
-        written.push(data);
+      writer.writeData = async () => {
         counter += 1;
         if (counter === 1000) reader.stop();
       };
-      writer.once('finish', () => {
-        expect(counter).to.be.at.least(1000);
-        expect(written[0]).to.have.property('idx', 0);
-        resolve();
-      });
-      reader.pipe(writer);
+      writer.on('finish', finish);
+      pipeline(
+        reader,
+        writer,
+        (error) => {
+          expect(counter).to.be.at.least(1000);
+          expect(end).to.have.been.calledOnce;
+          expect(finish).to.have.been.calledOnce;
+          expect(error).to.be.undefined;
+          resolve();
+        },
+      );
     });
   });
 
   it('should stream continuously reader->transformer->writer', async () => {
     return new Promise((resolve) => {
-      const written = [];
+      const end = sinon.spy();
+      const finish = sinon.spy();
       let counter = 0;
       const reader = new ContinuousReader();
-      reader.readData = async (count) => {
-        return createDataArray(count);
-      };
+      reader.readData = async (count) => createDataArray(count);
+      reader.on('end', end);
       const transformer = new ContinuousTransformer();
-      transformer.transformData = async (data) => {
-        return { ...data, foo: true }; // simply mirrow for testing
-      };
+      transformer.transformData = async (data) => data;
       const writer = new ContinuousWriter();
-      writer.writeData = async (data) => {
-        written.push(data);
+      writer.writeData = async () => {
         counter += 1;
         if (counter === 1000) reader.stop();
       };
-      writer.once('finish', () => {
-        expect(counter).to.be.at.least(1000);
-        expect(written[0]).to.have.property('idx', 0);
-        expect(written[0]).to.have.property('foo', true);
-        resolve();
-      });
-      reader.pipe(transformer).pipe(writer);
+      writer.on('finish', finish);
+      pipeline(
+        reader,
+        transformer,
+        writer,
+        (error) => {
+          expect(counter).to.be.at.least(1000);
+          expect(end).to.have.been.calledOnce;
+          expect(finish).to.have.been.calledOnce;
+          expect(error).to.be.undefined;
+          resolve();
+        },
+      );
+    });
+  });
+
+  it('should pass data reader->transformer->transformer->writer', async () => {
+    return new Promise((resolve) => {
+      const collection = [];
+      const reader = new ContinuousReader();
+      reader.readData = async (count) => createDataArray(count);
+      const transformer1 = new ContinuousTransformer();
+      transformer1.transformData = async (data) => ({ ...data, foo: true });
+      const transformer2 = new ContinuousTransformer();
+      transformer2.transformData = async (data) => ({ ...data, bar: true });
+      const writer = new ContinuousWriter();
+      writer.writeData = async (data) => {
+        collection.push(data);
+        if (collection.length === 1000) reader.stop();
+      };
+      pipeline(
+        reader,
+        transformer1,
+        transformer2,
+        writer,
+        (error) => {
+          expect(collection.length).to.be.at.least(1000);
+          expect(error).to.be.undefined;
+          collection.forEach((data) => {
+            expect(data).to.have.property('foo', true);
+            expect(data).to.have.property('bar', true);
+          });
+          resolve();
+        },
+      );
     });
   });
 
   it('should support specific chunk sizes by reader', async () => {
-    const chunksRequested = [];
     return new Promise((resolve, reject) => {
+      const collection = [];
       let counter = 0;
       const reader = new ContinuousReader({
         chunkSize: 44,
       });
       reader.readData = async (count) => {
-        chunksRequested.push(count);
+        collection.push(count);
         return createDataArray(count);
       };
       const writer = new ContinuousWriter();
@@ -81,8 +123,8 @@ describe('Continuous pipeline', () => {
       };
       writer.once('finish', () => {
         try {
-          expect(chunksRequested.length).to.be.greaterThan(0);
-          chunksRequested.forEach((count) => {
+          expect(collection.length).to.be.greaterThan(0);
+          collection.forEach((count) => {
             expect(count).to.be.equals(44);
           });
           resolve();
@@ -441,7 +483,38 @@ describe('Continuous pipeline', () => {
     });
   });
 
-  it('should fork items by transformer (one to many)');
+  it('should fork items by transformer (one to many)', async () => {
+    return new Promise((resolve) => {
+      let readCounter = 0;
+      let writeCounter = 0;
+      const reader = new ContinuousReader();
+      reader.readData = async (count) => {
+        const data = await createDataArray(count);
+        readCounter += data.length;
+        return data;
+      };
+      const transformer = new ContinuousTransformer();
+      transformer.transformData = async (item) => ([
+        { ...item, foo: true },
+        { ...item, bar: true },
+      ]);
+      const writer = new ContinuousWriter();
+      writer.writeData = async () => {
+        writeCounter += 1;
+        if (writeCounter === 1000) reader.stop();
+      };
+      pipeline(
+        reader,
+        transformer,
+        writer,
+        (error) => {
+          expect(error).to.be.undefined;
+          expect(writeCounter).to.be.equal(readCounter * 2);
+          resolve();
+        },
+      );
+    });
+  });
 
   it('should terminate on write error', async () => {
     return new Promise((resolve, reject) => {
