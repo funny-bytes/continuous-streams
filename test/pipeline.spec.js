@@ -158,7 +158,7 @@ describe('Continuous pipeline', () => {
     });
   });
 
-  it('should work if reader temporarily provides no data', async () => {
+  it('should work if reader temporarily provides no data reader->writer', async () => {
     return new Promise((resolve) => {
       let chunk = 0;
       let counter = 0;
@@ -175,10 +175,45 @@ describe('Continuous pipeline', () => {
         counter += 1;
         if (counter === 1000) reader.stop();
       };
-      writer.once('finish', () => {
-        resolve();
+      pipeline(
+        reader,
+        writer,
+        (error) => {
+          expect(error).to.be.undefined;
+          resolve();
+        },
+      );
+    });
+  });
+
+  it('should work if reader temporarily provides no data reader->transformer->writer', async () => {
+    return new Promise((resolve) => {
+      let chunk = 0;
+      let counter = 0;
+      const reader = new ContinuousReader({
+        waitAfterEmpty: 0,
       });
-      reader.pipe(writer);
+      reader.readData = async (count) => {
+        const num = (chunk % 2) ? count : 0;
+        chunk += 1;
+        return createDataArray(num);
+      };
+      const transformer = new ContinuousTransformer();
+      transformer.transformData = async (data) => data;
+      const writer = new ContinuousWriter();
+      writer.writeData = async () => {
+        counter += 1;
+        if (counter === 1000) reader.stop();
+      };
+      pipeline(
+        reader,
+        transformer,
+        writer,
+        (error) => {
+          expect(error).to.be.undefined;
+          resolve();
+        },
+      );
     });
   });
 
