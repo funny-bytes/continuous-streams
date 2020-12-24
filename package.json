@@ -1,6 +1,6 @@
 {
   "name": "continuous-streams",
-  "version": "1.0.0-beta.6",
+  "version": "1.0.0-beta.7",
   "description": "Special purpose Node streams",
   "main": "src/index.js",
   "scripts": {
@@ -14,7 +14,9 @@
     "url": "git://github.com/frankthelen/continuous-streams.git"
   },
   "keywords": [
-    "stream", "streams", "continuous"
+    "stream",
+    "streams",
+    "continuous"
   ],
   "author": "Frank Thelen",
   "license": "MIT",
