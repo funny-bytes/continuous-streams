@@ -14,7 +14,7 @@
     "url": "git://github.com/frankthelen/continuous-streams.git"
   },
   "keywords": [
-    "streams"
+    "stream", "streams", "continuous"
   ],
   "author": "Frank Thelen",
   "license": "MIT",
