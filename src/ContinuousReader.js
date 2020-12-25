@@ -56,7 +56,7 @@ class ContinuousReader extends Readable {
       if (this.skipOnError) {
         this.emit('skip', { error });
       } else {
-        this.emit('error', error); // an `error` event may be emitted by a Readable at any time
+        this.destroy(error); // -> 'error' event -> 'close' event
       }
       await delay(this.waitAfterError);
       this.push(); // continue reading !!

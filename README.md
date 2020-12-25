@@ -66,12 +66,12 @@ Extends `stream.Readable`.
 It reads from an underlying data source (`objectMode` only) -- please implement or assign `readData()` for that purpose.
 It does not `end` when the underlying data source is (temporarily) empty but waits for new data to arrive.
 It is robust/reluctant regarding (temporary) reading errors.
-It supports gracefully shutting down the pipeline.
+It supports gracefully stopping the pipeline.
 
 **Options**
 
 * `chunkSize` - Whenever the number of objects in the internal buffer is dropping below `chunkSize`, a new chunk of data is read from the underlying resource. Higher means fewer polling but less real-time. Default is `50`.
-* `skipOnError` - If `true` (default), a `skip` event is emitted when `readData()` rejects. If `false`, an `error` event is emitted when `readData()` rejects which stops the pipeline when started with `pipeline()` (recommended). Default is `true`.
+* `skipOnError` - If `true` (default), a `skip` event is emitted when `readData()` rejects. If `false`, an `error` event is emitted when `readData()` rejects and the pipeline will stop. Default is `true`.
 * `waitAfterEmpty` - Delay in milliseconds if there is (temporarily) no data available. Default is `5000`.
 * `waitAfterLow` - Delay in milliseconds if there is (temporarily) less data available than chunk size. Default is `1000`.
 * `waitAfterError` - Delay in milliseconds if there is a (temporary) reading problem. Default is `10000`.
@@ -79,13 +79,13 @@ It supports gracefully shutting down the pipeline.
 **Methods**
 
 * `readData(count)` -- An asynchronous method to read `count` data items from the underlying resource. To be implemented or assigned. `count` is usually equals `chunkSize`. It resolves with an array of data items -- which may be empty if there is temporarily no data available. If it rejects, an `error` or `skip` event is emitted (depending on `skipOnError`).
-* `stop()` - To be called after `SIGINT` or `SIGTERM` for gracefully shutting down the pipeline. The `end` event is emitted at the next reading attempt. Graceful shutdown means that all data that has been read so far will be fully processed throughout the entire pipeline. Example: `process.on('SIGINT', () => reader.stop())`.
+* `stop()` - To be called after `SIGINT` or `SIGTERM` for gracefully stopping the pipeline. The `end` event is emitted at the next reading attempt. Graceful shutdown means that all data that has been read so far will be fully processed throughout the entire pipeline. Example: `process.on('SIGINT', () => reader.stop())`.
 
 **Events**
 
 * `skip` - When reading from the underlying resource failed (if `skipOnError` is `true`). The stream continues to read after a delay of `waitAfterError`. Example handler: `reader.on('skip', ({ error }) => { ... })`.
-* `error` - When reading from the underlying resource failed (if `skipOnError` is `false`). If the pipeline was started with `pipeline()` (recommended), the pipeline will stop. If the pipeline was started with `pipe()`, it will continue processing -- an error handler must be provided though. Example handler: `reader.on('error', (error) => { ... })`.
-* `end` - When `stop()` was called for gracefully shutting down the pipeline.
+* `error` - When reading from the underlying resource failed (if `skipOnError` is `false`). This will stop the pipeline. Example handler: `reader.on('error', (error) => { ... })`.
+* `end` - When `stop()` was called for gracefully stopping the pipeline.
 * `close` - When the stream is closed (as usual).
 * `debug` - After each successful reading attempt providing some debug information. Example handler: `reader.on('debug', ({ items, requested, total, elapsed }) => { ... })`. `items` is the number of read data items. `requested` is the number of requested data items (normally equals `count`). `total` is an overall counter. `elapsed` is the number of milliseconds of `readData()` to resolve.
 
@@ -96,12 +96,12 @@ It processes data items (`objectMode` only) for some sort of write operation at 
 It is robust/reluctant regarding errors.
 If `skipOnError` is `true` (default), an error during a write operation emits a `skip` event and stream processing will continue.
 If `skipOnError` is `false`, an error during a write operation emits an `error` event and stream processing will stop.
-Supports gracefully shutting down the entire pipeline, i.e., it waits until all asynchronous operation in-flight are returned before emitting the `finish` event.
+Supports gracefully stopping the entire pipeline, i.e., it waits until all asynchronous operations in-flight are returned before emitting the `finish` event.
 
 **Options**
 
 * `parallelOps` - The max number of asynchronous `writeData()` operations to fire off in parallel. Default is `10`.
-* `skipOnError` - If `true` (default), a `skip` event is emitted when `writeData()` rejects. If `false`, an `error` event is emitted when `writeData()` rejects which stops the pipeline. Default is `true`.
+* `skipOnError` - If `true` (default), a `skip` event is emitted when `writeData()` rejects. If `false`, an `error` event is emitted when `writeData()` rejects and the pipeline will stop. Default is `true`.
 * `timeoutMillis` - Timeout in milliseconds for `writeData()`. Default is `60000`.
 
 **Methods**
@@ -111,7 +111,7 @@ Supports gracefully shutting down the entire pipeline, i.e., it waits until all 
 **Events**
 
 * `skip` - If `skipOnError` is `true` (default). Example handler: `writer.on('skip', ({ data, error }) => { ... })`.
-* `error` - If `skipOnError` is `false`. The pipeline will stop.
+* `error` - If `skipOnError` is `false`. This will stop the pipeline.
 * `finish` - After graceful shutdown and all asynchronous write operations are returned.
 * `close` - After `error` or `finish` (as usual).
 * `debug` - After each successful write operation providing some debug information. Example handler: `writer.on('debug', ({ inflight, total, elapsed }) => { ... })`. `inflight` is the number of asynchroneous `writeData()` operations currenly inflight. `total` is an overall counter. `elapsed` is the number of milliseconds of `writeData()` to resolve.
@@ -127,7 +127,7 @@ If `skipOnError` is `false`, an error during a transform operation emits an `err
 **Options**
 
 * `parallelOps` - The max number of asynchronous `transformData()` operations to fire off in parallel. Default is `10`.
-* `skipOnError` - If `true` (default), a `skip` event is emitted when `transformData()` rejects. If `false`, an `error` event is emitted when `transformData()` rejects which stops the pipeline. Default is `true`.
+* `skipOnError` - If `true` (default), a `skip` event is emitted when `transformData()` rejects. If `false`, an `error` event is emitted when `transformData()` rejects and the pipeline will stop. Default is `true`.
 * `timeoutMillis` - Timeout in milliseconds for `transformData()`. Default is `60000`.
 
 **Methods**
@@ -137,6 +137,6 @@ If `skipOnError` is `false`, an error during a transform operation emits an `err
 **Events**
 
 * `skip` - If `skipOnError` is `true` (default). Example handler: `transformer.on('skip', ({ data, error }) => { ... })`.
-* `error` - If `skipOnError` is `false`. The pipeline will stop.
+* `error` - If `skipOnError` is `false`. This will stop the pipeline.
 * `close` - When the stream is closed (as usual).
 * `debug` - After each successful transform operation providing some debug information. Example handler: `transformer.on('debug', ({ inflight, total, elapsed }) => { ... })`. `inflight` is the number of asynchroneous `transformData()` operations currenly inflight. `total` is an overall counter. `elapsed` is the number of milliseconds of `transformData()` to resolve.
