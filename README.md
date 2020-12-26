@@ -14,6 +14,7 @@ Stream classes with specific behaviour:
 [![Maintainability](https://api.codeclimate.com/v1/badges/d0f823493c0977615c21/maintainability)](https://codeclimate.com/github/frankthelen/continuous-streams/maintainability)
 [![node](https://img.shields.io/node/v/continuous-streams.svg)](https://nodejs.org)
 [![code style](https://img.shields.io/badge/code_style-airbnb-brightgreen.svg)](https://github.com/airbnb/javascript)
+[![Types](https://img.shields.io/npm/types/continuous-streams.svg)](https://www.npmjs.com/package/continuous-streams)
 [![License Status](http://img.shields.io/npm/l/continuous-streams.svg)]()
 
 ## Install
@@ -24,7 +25,7 @@ npm install continuous-streams
 
 ## Usage
 
-This is a basic example.
+This is a basic example (ES6/ES2015).
 
 ```javascript
 const { pipeline } = require('stream');
@@ -56,6 +57,26 @@ pipeline( // go!
 ['SIGTERM', 'SIGINT'].forEach((eventType) => {
   process.on(eventType, () => reader.stop());
 });
+```
+
+Or if you prefer **typescript** (types included):
+
+```typescript
+import { pipeline } from "stream";
+import { ContinuousReader, ContinuousWriter } from "continuous-streams";
+
+const reader = new ContinuousReader<Foo>();
+reader.readData = async (count: number): Promise<Foo[]> => {
+  // ...
+  return items;
+}
+
+const writer = new ContinuousWriter<Foo>();
+writer.writeData = async (item: Foo): Promise<void> => {
+  // ...
+}
+
+// ...
 ```
 
 ## Stream Classes
