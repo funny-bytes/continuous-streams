@@ -1,6 +1,6 @@
-require('./setup');
+require('./test-helper');
 const { expect } = require('chai');
-const FlightController = require('../src/FlightController');
+const FlightController = require('../../src/FlightController');
 
 describe('FlightController', () => {
   it('should set default values', () => {

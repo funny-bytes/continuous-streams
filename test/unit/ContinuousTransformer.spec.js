@@ -1,6 +1,6 @@
-require('./setup');
+require('./test-helper');
 const delay = require('delay');
-const { ContinuousTransformer } = require('..');
+const { ContinuousTransformer } = require('../..');
 
 describe('ContinuousTransformer', () => {
   it('should throw if method is not set specifically', async () => {

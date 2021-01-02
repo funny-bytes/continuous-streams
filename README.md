@@ -59,7 +59,7 @@ pipeline( // go!
 });
 ```
 
-Or if you prefer **typescript** (types included):
+Or if you prefer **TypeScript** (types included):
 
 ```typescript
 import { pipeline } from "stream";
@@ -77,6 +77,18 @@ writer.writeData = async (item: Foo): Promise<void> => {
 }
 
 // ...
+```
+
+For this module to work, your TypeScript compiler options must include:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2015", // or later
+    "moduleResolution": "node",
+    "esModuleInterop": true
+  }
+}
 ```
 
 ## Stream Classes

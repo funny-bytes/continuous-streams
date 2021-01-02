@@ -1,6 +1,6 @@
-require('./setup');
+require('./test-helper');
 const { expect } = require('chai');
-const { ContinuousReader } = require('..');
+const { ContinuousReader } = require('../..');
 
 describe('ContinuousReader', () => {
   it('should throw if method is not set specifically', async () => {

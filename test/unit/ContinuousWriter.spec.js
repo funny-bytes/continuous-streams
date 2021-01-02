@@ -1,6 +1,6 @@
-require('./setup');
+require('./test-helper');
 const delay = require('delay');
-const { ContinuousWriter } = require('..');
+const { ContinuousWriter } = require('../..');
 
 describe('ContinuousWriter', () => {
   it('should throw if method is not set specifically', async () => {

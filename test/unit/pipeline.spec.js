@@ -1,9 +1,9 @@
 /* eslint-disable arrow-body-style */
-require('./setup');
+require('./test-helper');
 const { expect } = require('chai');
 const delay = require('delay');
-const { ContinuousReader, ContinuousWriter, ContinuousTransformer } = require('..');
-const { pipeline } = require('../src/ContinuousReader');
+const { pipeline } = require('stream');
+const { ContinuousReader, ContinuousWriter, ContinuousTransformer } = require('../..');
 
 describe('Continuous pipeline', () => {
   const createDataArray = async (count) => {
