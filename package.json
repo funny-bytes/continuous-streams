@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/frankthelen/continuous-streams.git"
+    "url": "git://github.com/funny-bytes/continuous-streams.git"
   },
   "keywords": [
     "stream",
@@ -24,9 +24,9 @@
   "author": "Frank Thelen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/frankthelen/continuous-streams/issues"
+    "url": "https://github.com/funny-bytes/continuous-streams/issues"
   },
-  "homepage": "https://github.com/frankthelen/continuous-streams#readme",
+  "homepage": "https://github.com/funny-bytes/continuous-streams#readme",
   "engines": {
     "node": ">=12.x.x"
   },
