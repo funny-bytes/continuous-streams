@@ -9,7 +9,6 @@
     "test": "npm run test:unit && npm run test:typescript",
     "test:unit": "nyc --reporter=lcov --reporter=text-summary mocha --exit --recursive --timeout 5000 test/unit",
     "test:typescript": "mocha -r ts-node/register test/typescript/**/*.spec.ts",
-    "coveralls": "nyc report --reporter=lcovonly && cat ./coverage/lcov.info | coveralls",
     "preversion": "npm run lint && npm test"
   },
   "repository": {
@@ -37,20 +36,20 @@
   "devDependencies": {
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",
-    "@types/node": "^16.6.1",
+    "@types/node": "^16.7.8",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.1.1",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-should-promised": "^2.0.0",
-    "mocha": "^9.0.3",
+    "mocha": "^9.1.1",
     "nyc": "^15.1.0",
     "sinon": "^11.1.2",
     "sinon-chai": "^3.7.0",
-    "ts-node": "^10.2.0",
-    "typescript": "^4.3.5"
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.2"
   }
 }

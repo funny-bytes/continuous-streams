@@ -9,9 +9,9 @@ Stream classes with specific behavior:
 * timeouts
 * graceful shutdown after `SIGTERM` or `SIGINT`
 
-[![Build Status](https://travis-ci.org/frankthelen/continuous-streams.svg?branch=main)](https://travis-ci.org/frankthelen/continuous-streams)
-[![Coverage Status](https://coveralls.io/repos/github/frankthelen/continuous-streams/badge.svg?branch=main)](https://coveralls.io/github/frankthelen/continuous-streams?branch=main)
-[![Maintainability](https://api.codeclimate.com/v1/badges/d0f823493c0977615c21/maintainability)](https://codeclimate.com/github/frankthelen/continuous-streams/maintainability)
+![main workflow](https://github.com/funny-bytes/hapi-locale-17/actions/workflows/main.yml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/funny-bytes/continuous-streams/badge.svg?branch=main)](https://coveralls.io/github/funny-bytes/continuous-streams?branch=main)
+[![Maintainability](https://api.codeclimate.com/v1/badges/d0f823493c0977615c21/maintainability)](https://codeclimate.com/github/funny-bytes/continuous-streams/maintainability)
 [![node](https://img.shields.io/node/v/continuous-streams.svg)](https://nodejs.org)
 [![code style](https://img.shields.io/badge/code_style-airbnb-brightgreen.svg)](https://github.com/airbnb/javascript)
 [![Types](https://img.shields.io/npm/types/continuous-streams.svg)](https://www.npmjs.com/package/continuous-streams)
