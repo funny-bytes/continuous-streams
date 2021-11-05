@@ -25,9 +25,9 @@ export interface ContinuousWriterOptions {
   timeoutMillis?: number;
 }
 
-export class ContinuousTransformer<T> extends Transform {
+export class ContinuousTransformer<T, S = T> extends Transform {
   constructor(opts?: ContinuousTransformerOptions);
-  transformData(data: T): Promise<T> | Promise<T[]>;
+  transformData(data: T): Promise<S> | Promise<S[]>;
 }
 
 export interface ContinuousTransformerOptions {
