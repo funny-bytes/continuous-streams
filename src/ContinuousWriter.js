@@ -27,9 +27,7 @@ class ContinuousWriter extends Writable {
     this.flightController.up(callback);
     try {
       const startTime = Date.now();
-      await timeout(
-        this.writeData(data), this.timeoutMillis,
-      );
+      await timeout(this.writeData(data), this.timeoutMillis);
       const endTime = Date.now();
       this.total += 1;
       this.emit('debug', {

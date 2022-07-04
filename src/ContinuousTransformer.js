@@ -27,9 +27,7 @@ class ContinuousTransformer extends Transform {
     this.flightController.up(callback);
     try {
       const startTime = Date.now();
-      const dataTransformed = await timeout(
-        this.transformData(data), this.timeoutMillis,
-      );
+      const dataTransformed = await timeout(this.transformData(data), this.timeoutMillis);
       const endTime = Date.now();
       this.total += 1;
       this.emit('debug', {
