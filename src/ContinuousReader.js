@@ -19,16 +19,26 @@ class ContinuousReader extends Readable {
     this.waitAfterLow = waitAfterLow;
     this.waitAfterError = waitAfterError;
     this.total = 0; // counter
+    this.stopping = false;
     this.stopped = false;
   }
 
   stop() {
-    this.stopped = true;
+    if (this.readableLength === 0) { // stop immediately
+      this.stopped = true;
+      this.push(null); // -> 'end' event -> 'close' event
+      return;
+    }
+    this.stopping = true; // stop later
   }
 
   // eslint-disable-next-line no-underscore-dangle
   async _read(count) {
     if (this.stopped) {
+      return;
+    }
+    if (this.stopping) {
+      this.stopped = true;
       this.push(null); // -> 'end' event -> 'close' event
       return;
     }

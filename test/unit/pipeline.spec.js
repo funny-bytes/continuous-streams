@@ -5,6 +5,9 @@ const delay = require('delay');
 const { pipeline } = require('stream');
 const { ContinuousReader, ContinuousWriter, ContinuousTransformer } = require('../..');
 
+// eslint-disable-next-line no-promise-executor-return
+const wait = async (millis = 1000) => new Promise((resolve) => setTimeout(resolve, millis));
+
 describe('Continuous pipeline', () => {
   const createDataArray = async (count) => {
     const chunk = `${Date.now()}`;
@@ -740,6 +743,27 @@ describe('Continuous pipeline', () => {
         resolve();
       });
       reader.pipe(transformer).pipe(writer);
+    });
+  });
+
+  it('should terminate gracefully when reader buffer is empty', async () => {
+    return new Promise((resolve) => {
+      const reader = new ContinuousReader();
+      reader.readData = async () => {
+        await wait(200);
+        return []; // never any data
+      };
+      const writer = new ContinuousWriter();
+      writer.writeData = async () => {
+        await wait(200);
+      };
+      writer.on('finish', () => {
+        resolve();
+      });
+      reader.pipe(writer);
+      setTimeout(() => {
+        reader.stop();
+      }, 1000);
     });
   });
 });
