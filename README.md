@@ -9,7 +9,7 @@ Stream classes with specific behavior:
 * timeouts
 * graceful shutdown after `SIGTERM` or `SIGINT`
 
-![main workflow](https://github.com/funny-bytes/hapi-locale-17/actions/workflows/main.yml/badge.svg)
+![main workflow](https://github.com/funny-bytes/continuous-streams/actions/workflows/main.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/funny-bytes/continuous-streams/badge.svg?branch=main)](https://coveralls.io/github/funny-bytes/continuous-streams?branch=main)
 [![Maintainability](https://api.codeclimate.com/v1/badges/d0f823493c0977615c21/maintainability)](https://codeclimate.com/github/funny-bytes/continuous-streams/maintainability)
 [![node](https://img.shields.io/node/v/continuous-streams.svg)](https://nodejs.org)
@@ -103,8 +103,8 @@ It supports gracefully stopping the pipeline.
 
 #### Methods
 
-* `readData(count)` -- An asynchronous method to read `count` data items from the underlying resource. To be implemented or assigned. `count` is usually equals `chunkSize`. It resolves with an array of data items -- which may be empty if there is temporarily no data available. If it rejects, an `error` or `skip` event is emitted (depending on `skipOnError`).
-* `stop()` - To be called after `SIGINT` or `SIGTERM` for gracefully stopping the pipeline. The `end` event is emitted at the next reading attempt. Graceful shutdown means that all data that has been read so far will be fully processed throughout the entire pipeline. Example: `process.on('SIGINT', () => reader.stop())`.
+* `async readData(count)` -- Reads `count` data items from the underlying resource. To be implemented or assigned. `count` is usually equals `chunkSize`. It resolves with an array of data items -- which may be empty if there is temporarily no data available. If it rejects, an `error` or `skip` event is emitted (depending on `skipOnError`).
+* `stop()` - To be called after `SIGINT` or `SIGTERM` for gracefully stopping the pipeline. The `end` event is emitted either immediately (if the read buffer is empty) or at the next reading attempt. Graceful shutdown means that all data that has been read so far will be fully processed throughout the entire pipeline. Example: `process.on('SIGTERM', () => reader.stop())`.
 
 #### Events
 
@@ -131,7 +131,7 @@ Supports gracefully stopping the entire pipeline, i.e., it waits until all async
 
 #### Methods
 
-* `writeData(item)` -- An asynchronous method to process a single data item. To be implemented or assigned. If it rejects, an `error` or `skip` event is emitted (depending on `skipOnError`).
+* `async writeData(item)` -- Processes a single data item. To be implemented or assigned. If it rejects, an `error` or `skip` event is emitted (depending on `skipOnError`).
 
 #### Events
 
@@ -157,7 +157,7 @@ If `skipOnError` is `false`, an error during a transform operation emits an `err
 
 #### Methods
 
-* `transformData(item)` -- An asynchronous method to process a single data item. Resolves with the transformed data item (or an array of items for splitting the item into multiple items). To be implemented or assigned. If it rejects, an `error` or `skip` event is emitted (depending on `skipOnError`).
+* `async transformData(item)` -- Processes a single data item. Resolves with the transformed data item (or an array of items for splitting the item into multiple items). To be implemented or assigned. If it rejects, an `error` or `skip` event is emitted (depending on `skipOnError`).
 
 #### Events
 
