@@ -12,6 +12,7 @@ export interface ContinuousReaderOptions {
   waitAfterEmpty?: number;
   waitAfterLow?: number;
   waitAfterError?: number;
+  autoStop?: boolean;
 }
 
 export interface ContinuousReaderEventDebug {

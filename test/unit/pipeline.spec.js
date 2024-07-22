@@ -766,4 +766,54 @@ describe('Continuous pipeline', () => {
       }, 1000);
     });
   });
+
+  it('should terminate gracefully when reader data is low and autoStop=true', async () => {
+    const data = ['a', 'b', 'c'];
+    let readerIndex = 0;
+    return new Promise((resolve) => {
+      const reader = new ContinuousReader({ chunkSize: 2, autoStop: true });
+      reader.readData = async (count) => {
+        await wait(100);
+        const chunk = data.slice(readerIndex, readerIndex + count);
+        readerIndex += chunk.length;
+        return chunk;
+      };
+      const writerSpy = sinon.spy();
+      const writer = new ContinuousWriter();
+      writer.writeData = async (d) => {
+        await wait(100);
+        writerSpy(d);
+      };
+      writer.once('finish', () => {
+        expect(writerSpy).to.have.been.calledThrice;
+        resolve();
+      });
+      reader.pipe(writer);
+    });
+  });
+
+  it('should terminate gracefully when reader data is empty and autoStop=true', async () => {
+    const data = ['a', 'b', 'c', 'd'];
+    let readerIndex = 0;
+    return new Promise((resolve) => {
+      const reader = new ContinuousReader({ chunkSize: 2, autoStop: true });
+      reader.readData = async (count) => {
+        await wait(100);
+        const chunk = data.slice(readerIndex, readerIndex + count);
+        readerIndex += chunk.length;
+        return chunk;
+      };
+      const writerSpy = sinon.spy();
+      const writer = new ContinuousWriter();
+      writer.writeData = async (d) => {
+        await wait(100);
+        writerSpy(d);
+      };
+      writer.once('finish', () => {
+        expect(writerSpy.callCount).to.be.equals(4);
+        resolve();
+      });
+      reader.pipe(writer);
+    });
+  });
 });

@@ -9,6 +9,7 @@ class ContinuousReader extends Readable {
       waitAfterEmpty = 5000, // wait for new items in database (limit load on database)
       waitAfterLow = 1000, // wait if the chunk size is smaller than requested (limit load on db)
       waitAfterError = 10000, // wait for database to recover from error (limit load on database)
+      autoStop = false,
     } = opts;
     super({
       objectMode: true,
@@ -18,13 +19,17 @@ class ContinuousReader extends Readable {
     this.waitAfterEmpty = waitAfterEmpty;
     this.waitAfterLow = waitAfterLow;
     this.waitAfterError = waitAfterError;
+    this.autoStop = autoStop;
     this.total = 0; // counter
     this.stopping = false;
     this.stopped = false;
   }
 
-  stop() {
-    if (this.readableLength === 0) { // stop immediately
+  stop(immediately = false) {
+    if (this.stopped) {
+      return;
+    }
+    if (immediately || this.readableLength === 0) { // stop immediately
       this.stopped = true;
       this.push(null); // -> 'end' event -> 'close' event
       return;
@@ -53,14 +58,16 @@ class ContinuousReader extends Readable {
         total: this.total,
         elapsed: endTime - startTime,
       });
-      if (items.length > 0) {
-        items.forEach((item) => this.push(item));
-        if (items.length < count) {
-          await delay(this.waitAfterLow);
-        }
-      } else { // currently no new items in database
+      items.forEach((item) => this.push(item));
+      if (items.length < count && this.autoStop) {
+        this.stop(true);
+        return;
+      }
+      if (items.length === 0) { // no new items in database
         await delay(this.waitAfterEmpty);
         this.push(); // continue reading !!
+      } else if (items.length < count) { // too few items in database
+        await delay(this.waitAfterLow);
       }
     } catch (error) {
       if (this.skipOnError) {
