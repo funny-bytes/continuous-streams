@@ -100,6 +100,7 @@ It supports gracefully stopping the pipeline.
 * `waitAfterEmpty` - Delay in milliseconds if there is (temporarily) no data available. Default is `5000`.
 * `waitAfterLow` - Delay in milliseconds if there is (temporarily) less data available than chunk size. Default is `1000`.
 * `waitAfterError` - Delay in milliseconds if there is a (temporary) reading problem. Default is `10000`.
+* `autoStop` - The intention of this package was to provide easy streaming without stopping the stream when the source is (temporarily) empty. But sometimes, however, this is exactly what you want. Default is `false`. Set to `true` to automatically and gracefully stop streaming when `readData()` returns no data or less than requested.
 
 #### Methods
 
