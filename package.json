@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/funny-bytes/continuous-streams#readme",
   "engines": {
-    "node": ">=12.x.x"
+    "node": ">=14.x.x"
   },
   "dependencies": {
     "delay": "^5.0.0",
@@ -36,20 +36,20 @@
   "devDependencies": {
     "@types/chai": "^4.3.16",
     "@types/mocha": "^10.0.7",
-    "@types/node": "^20.14.11",
+    "@types/node": "^22.10.7",
     "chai": "^4.4.1",
     "chai-as-promised": "^7.1.2",
     "coveralls": "^3.1.1",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-promise": "^6.6.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-promise": "^7.2.1",
     "eslint-plugin-should-promised": "^2.0.0",
-    "mocha": "^10.7.0",
-    "nyc": "^17.0.0",
+    "mocha": "^11.0.1",
+    "nyc": "^17.1.0",
     "sinon": "^18.0.0",
     "sinon-chai": "^3.7.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.3"
+    "typescript": "^5.7.3"
   }
 }
